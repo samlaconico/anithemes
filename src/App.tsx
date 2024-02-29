@@ -5,12 +5,13 @@ function App() {
   const [search, setSearch] = useState<any[]>([]);
 
   const handleChange = async (input:string) => {
+
+    setSearch(["loading"])
     const temp = await fetch(
       `https://api.animethemes.moe/search?q=${input}`
     ).then((res) => res.json())
     
     setSearch([])
-    
     temp.search.anime.map((index:any) => {
         setSearch(search => [...search, index.name])
         console.log("this is whats being added:" + index.name)
