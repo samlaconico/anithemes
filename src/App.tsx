@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { KeyboardEvent, useState } from 'react'
 
 function App() {
 
   const [search, setSearch] = useState<any[]>([]);
 
-  const submit = async (input:string) => {
+  const handleChange = async (input:string) => {
     const temp = await fetch(
       `https://api.animethemes.moe/search?q=${input}`
     ).then((res) => res.json())
@@ -21,31 +21,42 @@ function App() {
     //setSearch(temp)
   }
 
+  const handleEnter = (e:KeyboardEvent) => {
+    if (e.code == "Enter") {
+      e.preventDefault()
+    }
+
+    console.log(e.key)
+  }
+
   return (
     <>
       <div className='h-screen flex flex-col space-y-3 m-auto items-center justify-center'>
         <div className='text-5xl text-center'>
           anithemes
         </div>
-        <div className='flex flex-col items-center'>
-          <form className='flex flex-col space-y-3'>
+
+        <div className='flex flex-col shadow-xl'>
+          <form className='space-y-3 w-full drop-shadow-lg'>
             <input
-              className='bg-slate-400 rounded-md text-black px-1 border-black border-2 placeholder-white' 
+              className='w-full bg-white rounded-md text-black p-2 placeholder-neutral-400' 
               type="text"
-              onChange={(e) => submit(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={(e) => handleEnter(e)}
               placeholder='title of Anime'
               id="theme" 
               name="theme"
             />
-            <h1>{search.map((index) => (<p>{index}</p>))}</h1>
 
-            <input 
-              type="submit" 
-              value="submit"
-              className='rounded-md bg-neutral-400 w-1/2 self-center drop-shadow-md hover:bg-neutral-500 '
-            />
+            <div className={search.length > 0 ? " divide-y-2 divide-black/5 rounded-md" : "hidden"}>
+              {search.map((index) => (
+                <h1 className='hover:bg-neutral-300 p-2 rounded-md'>{index}</h1>
+              ))}
+            </div>
+            
           </form>
         </div>
+
       </div>
     </>
   )
