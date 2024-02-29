@@ -10,7 +10,7 @@ function App() {
     const temp = await fetch(
       `https://api.animethemes.moe/search?q=${input}`
     ).then((res) => res.json())
-    
+
     setSearch([])
     temp.search.anime.map((index:any) => {
         setSearch(search => [...search, index.name])
@@ -37,8 +37,8 @@ function App() {
           anithemes
         </div>
 
-        <div className='flex flex-col shadow-xl'>
-          <form className='space-y-3 w-full drop-shadow-lg'>
+        <div className='flex flex-col shadow-xl rounded-md'>
+          <form className='space-y-3 w-full'>
             <input
               className='w-full bg-white rounded-md text-black p-2 placeholder-neutral-400' 
               type="text"
