@@ -2,13 +2,22 @@ import { useState } from 'react'
 
 function App() {
 
-  const [search, setSearch] = useState<String>();
+  const [search, setSearch] = useState<any[]>([]);
 
   const submit = async (input:string) => {
     const temp = await fetch(
       `https://api.animethemes.moe/search?q=${input}`
     ).then((res) => res.json())
-    console.log(temp.search.anime)
+    
+    setSearch([])
+    
+    temp.search.anime.map((index:any) => {
+        setSearch(search => [...search, index.name])
+        console.log("this is whats being added:" + index.name)
+      }
+    )
+
+    console.log(search)
     //setSearch(temp)
   }
 
@@ -18,7 +27,6 @@ function App() {
         <div className='text-5xl text-center'>
           anithemes
         </div>
-        <h1></h1>
         <div className='flex flex-col items-center'>
           <form className='flex flex-col space-y-3'>
             <input
@@ -29,6 +37,8 @@ function App() {
               id="theme" 
               name="theme"
             />
+            <h1>{search.map((index) => (<p>{index}</p>))}</h1>
+
             <input 
               type="submit" 
               value="submit"
