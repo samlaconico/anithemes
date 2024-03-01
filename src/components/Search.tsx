@@ -1,8 +1,39 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 
-export function Search() {
-  const [search, setSearch] = useState<any[]>([]);
+type SearchParams =  {
+  callbackFunction:(name:string) => void
+}
 
+export function Search({callbackFunction}:SearchParams) {
+  const [search, setSearch] = useState<string>();
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!search) return setSearchSuggestions([])
+    setSearchSuggestions(["loading"])
+
+    const fetchData = async () => {
+      console.log("MAKING AN API CALL")
+      const temp = await fetch(
+        `https://api.animethemes.moe/search?q=${search}`
+      ).then((res) => res.json());
+
+      setSearchSuggestions([])
+      temp.search.anime.map((index: any) => {
+        console.log(index.name)
+        setSearchSuggestions((searchSuggestions) => [...searchSuggestions, index.name])
+      })
+    }
+
+    const timer = setTimeout(() => {
+      fetchData()
+    }, 300)
+
+    return () => clearTimeout(timer)
+
+  }, [search])
+
+  /*
   const handleChange = async (input: string) => {
     setSearch(["loading"]);
     const temp = await fetch(
@@ -15,6 +46,8 @@ export function Search() {
       console.log("this is whats being added:" + index.name);
     });
 
+    
+    callbackFunction(temp.search.anime[0].name);
     console.log(search);
     //setSearch(temp)
   };
@@ -23,9 +56,7 @@ export function Search() {
     if (e.code == "Enter") {
       e.preventDefault();
     }
-
-    console.log(e.key);
-  };
+  }; */
 
   return (
     <div className="flex flex-col shadow-xl rounded-md">
@@ -33,21 +64,21 @@ export function Search() {
         <input
           className="w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"
           type="text"
-          onChange={(e) => handleChange(e.target.value)}
-          onKeyDown={(e) => handleEnter(e)}
           placeholder="title of Anime"
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
           id="theme"
           name="theme"
         />
 
         <div
           className={
-            search.length > 0
+            searchSuggestions.length > 0
               ? " divide-y-2 divide-black/5 rounded-md"
               : "hidden"
           }
         >
-          {search.map((index) => (
+          {searchSuggestions.map((index) => (
             <h1 className="hover:bg-neutral-300 p-2 rounded-md">{index}</h1>
           ))}
         </div>
