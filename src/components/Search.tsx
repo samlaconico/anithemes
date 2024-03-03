@@ -1,4 +1,5 @@
 import { useState, KeyboardEvent, useEffect } from "react";
+import ReactPlayer from "react-player";
 
 type SearchParams =  {
   callbackFunction:(name:string) => void
@@ -6,12 +7,31 @@ type SearchParams =  {
 
 export function Search({callbackFunction}:SearchParams) {
   const [search, setSearch] = useState<string>();
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = useState<Array<{title:string, link:string}>>([]);
   const [image, setImage] = useState();
+  const [video, setVideo] = useState("");
+
+  const insertSpaceBeforeCapitalLetters = (title:string) : string => {
+    let result = '';
+
+    for (let i = 0; i < title.length; i++) {
+        if (title[i] === ' ') {
+            result += ' ';
+            result += title.substring(i + 1);
+            break;
+        }
+        if (title[i] === title[i].toUpperCase() && i !== 0 && isNaN(Number(title[i]))) {
+            result += ' ';
+        }
+        result += title[i];
+    }
+
+    return result;
+}
 
   useEffect(() => {
     if (!search) return setSearchSuggestions([])
-    setSearchSuggestions(["loading"])
+    setSearchSuggestions([{title: "loading", link: "loading"}])
 
     const fetchData = async () => {
       console.log("MAKING AN API CALL")
@@ -20,11 +40,13 @@ export function Search({callbackFunction}:SearchParams) {
       ).then((res) => res.json());
 
       console.log(temp)
-      setSearchSuggestions([])
+      setSearchSuggestions([{title: "loading", link: "loading"}])
       temp.search.videos.map((index: any) => {
         //console.log(index.name)
-        setSearchSuggestions((searchSuggestions) => [...searchSuggestions, index.filename.split('-').join(' ')])
+        setSearchSuggestions((searchSuggestions) => [...searchSuggestions, {title: insertSpaceBeforeCapitalLetters(index.filename.split('-').join(' ')), link: index.link}])
       })
+
+     
     }
 
     const timer = setTimeout(() => {
@@ -58,21 +80,29 @@ export function Search({callbackFunction}:SearchParams) {
     if (e.code == "Enter") {
       e.preventDefault();
 
-      if (search?.toLowerCase() == searchSuggestions[0].toLowerCase()) {
-        getAnime(search.toLowerCase())
+      if (search?.toLowerCase() == searchSuggestions[0].title.toLowerCase()) {
+        getAnime(searchSuggestions[0].title, searchSuggestions[0].link)
         setSearch("")
         setSearchSuggestions([])
       }
     }
   }; 
 
-  const getAnime = async (search:string) => {
-    console.log(search)
+  const getAnime = async (search:string, link:string) => {
+    setVideo(link)
+    console.log(search + ' ' + link)
   }
 
   return (
     <div className="flex flex-col shadow-xl rounded-md">
-
+      <div className={video ? "visible" : "hidden"}>
+        <ReactPlayer 
+          url={video} 
+          controls
+          playing
+        >
+        </ReactPlayer>
+      </div>
       <form className="space-y-3 w-full">
         <input
           className="w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"
@@ -92,13 +122,13 @@ export function Search({callbackFunction}:SearchParams) {
               : "hidden"
           }
         >
-          {searchSuggestions.map((index) => (
+          {searchSuggestions.filter((index) => index.title != "loading").map((index) => (
             <h1 
               className="hover:bg-neutral-300 p-2 rounded-md" 
-              onClick={() => getAnime(index)} 
-              key={index}
+              onClick={() => getAnime(index.title, index.link)} 
+              key={index.title}
             >
-              {index}
+              {index.title}
             </h1>
           ))}
         </div>
