@@ -23,18 +23,18 @@ export function Search() {
   const [search, setSearch] = useState<string>("");
   const [searchSuggestions, setSearchSuggestions] = useState<Array<{title:string, link:string}>>([]);
   const [video, setVideo] = useState("");
+  const [currentSelection, setCurrentSelection] = useState<number>(0);
 
   useEffect(() => {
     if (!search) return setSearchSuggestions([])
     setSearchSuggestions([{title: "loading", link: "loading"}])
 
     const fetchData = async () => {
-      //console.log("MAKING AN API CALL")
       const temp = await fetch(
         `https://api.animethemes.moe/search?q=${search}`
       ).then((res) => res.json());
-      //console.log(temp)
 
+      setSearchSuggestions([])
       temp.search.videos.map((index: any) => {
         setSearchSuggestions((searchSuggestions) => [
           ...searchSuggestions,
@@ -50,20 +50,34 @@ export function Search() {
 
     const timer = setTimeout(() => {
       fetchData()
-      setSearchSuggestions([])
-
     }, 300)
 
     return () => clearTimeout(timer)
 
   }, [search])
 
+  useEffect(() => {
+    console.log(currentSelection)
+  }, [currentSelection])
+
   const handleEnter = (e: KeyboardEvent) => {
     if (e.code == "Enter") {
       e.preventDefault();
 
-      if (searchSuggestions[0].title != "loading" && searchSuggestions[0])
-        getAnime(searchSuggestions[0].title, searchSuggestions[0].link);
+      if (searchSuggestions[0].title != "loading")
+        getAnime(searchSuggestions[currentSelection].title, searchSuggestions[currentSelection].link);
+    }
+
+    if (e.code == "ArrowDown" && currentSelection < searchSuggestions.length - 1) {
+      setCurrentSelection(currentSelection => currentSelection + 1)
+    } else if (e.code == "ArrowDown") {
+      setCurrentSelection(0)
+    } 
+
+    if (e.code == "ArrowUp" && currentSelection > 0) {
+      setCurrentSelection(currentSelection => currentSelection - 1)
+    } else if (e.code == "ArrowUp") {
+      setCurrentSelection(searchSuggestions.length - 1)
     }
   }
 
@@ -106,8 +120,13 @@ export function Search() {
         >
           {searchSuggestions.map((index) => (
             <h1 
-              className="hover:bg-neutral-300 p-2 rounded-md" 
-              onClick={() => getAnime(index.title, index.link)} 
+              className={
+                searchSuggestions.findIndex(x => x.title === index.title) == currentSelection ?
+                "bg-neutral-300 p-2 rounded-md" : 
+                "p-2 rounded-md"
+              }
+              onClick={() => getAnime(index.title, index.link)}
+              onMouseOver={() => setCurrentSelection(searchSuggestions.findIndex(x => x.title === index.title))}
               key={index.title}
             >
               {index.title}
