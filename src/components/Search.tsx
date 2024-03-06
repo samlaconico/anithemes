@@ -98,7 +98,7 @@ export function Search({callback}:SearchParams) {
     <div className="flex flex-col shadow-xl rounded-md">
       <form className="w-full">
         <input
-          className={searchSuggestions ? "w-full bg-white rounded-t-md text-black p-2 placeholder-neutral-400" : "w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"}
+          className={searchSuggestions.length > 0 ? "w-full bg-white rounded-t-md text-black p-2 placeholder-neutral-400" : "w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"}
           type="text"
           placeholder="title of Anime"
           onChange={(e) => setSearch(e.target.value)}
