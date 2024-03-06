@@ -1,5 +1,8 @@
 import { useState, KeyboardEvent, useEffect } from "react";
-import ReactPlayer from "react-player";
+
+type SearchParams = {
+  callback: (link:string) => void
+}
 
 function insertSpaceBeforeCapitalLetters(title:string) : string  {
   let result = ''
@@ -19,10 +22,9 @@ function insertSpaceBeforeCapitalLetters(title:string) : string  {
   return result
 }
 
-export function Search() {
+export function Search({callback}:SearchParams) {
   const [search, setSearch] = useState<string>("");
   const [searchSuggestions, setSearchSuggestions] = useState<Array<{title:string, link:string}>>([]);
-  const [video, setVideo] = useState("");
   const [currentSelection, setCurrentSelection] = useState<number>(0);
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export function Search() {
   }
 
   const getAnime = async (search:string, link:string) => {
-    setVideo(link)
+    callback(link)
     setSearchSuggestions([])
     setSearch("")
     console.log(search + ' ' + link)
@@ -90,15 +92,6 @@ export function Search() {
 
   return (
     <div className="flex flex-col shadow-xl rounded-md">
-      <div className={video ? "visible" : "hidden"}>
-        <ReactPlayer 
-          url={video} 
-          controls
-          playing
-          loop
-        >
-        </ReactPlayer>
-      </div>
       <form className="space-y-3 w-full">
         <input
           className="w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"
