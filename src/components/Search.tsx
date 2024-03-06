@@ -71,14 +71,18 @@ export function Search({callback}:SearchParams) {
     }
 
     if (e.code == "ArrowDown" && currentSelection < searchSuggestions.length - 1) {
+      e.preventDefault();
       setCurrentSelection(currentSelection => currentSelection + 1)
     } else if (e.code == "ArrowDown") {
+      e.preventDefault();
       setCurrentSelection(0)
     } 
 
     if (e.code == "ArrowUp" && currentSelection > 0) {
+      e.preventDefault();
       setCurrentSelection(currentSelection => currentSelection - 1)
     } else if (e.code == "ArrowUp") {
+      e.preventDefault();
       setCurrentSelection(searchSuggestions.length - 1)
     }
   }
