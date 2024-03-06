@@ -96,9 +96,9 @@ export function Search({callback}:SearchParams) {
 
   return (
     <div className="flex flex-col shadow-xl rounded-md">
-      <form className="space-y-3 w-full">
+      <form className="w-full">
         <input
-          className="w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"
+          className={searchSuggestions ? "w-full bg-white rounded-t-md text-black p-2 placeholder-neutral-400" : "w-full bg-white rounded-md text-black p-2 placeholder-neutral-400"}
           type="text"
           placeholder="title of Anime"
           onChange={(e) => setSearch(e.target.value)}
@@ -119,8 +119,8 @@ export function Search({callback}:SearchParams) {
             <h1 
               className={
                 searchSuggestions.findIndex(x => x.title === index.title) == currentSelection ?
-                "bg-neutral-300 p-2 rounded-md" : 
-                "p-2 rounded-md"
+                "bg-neutral-300 p-2" : 
+                "p-2 bg-white"
               }
               onClick={() => getAnime(index.title, index.link)}
               onMouseOver={() => setCurrentSelection(searchSuggestions.findIndex(x => x.title === index.title))}

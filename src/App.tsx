@@ -12,7 +12,7 @@ function App() {
   return (
     <>
       <div className="h-screen flex flex-col space-y-3 m-auto items-center justify-center">
-        <div className="text-5xl text-center">anithemes</div>
+        <div className="text-5xl text-center text-pink-100 drop-shadow-glow">anithemes</div>
         <VideoPlayer link={currentVideo}></VideoPlayer>
         <Search callback={setVideo}/>
       </div>      
