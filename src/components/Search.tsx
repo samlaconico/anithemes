@@ -33,9 +33,10 @@ export function Search({callback}:SearchParams) {
 
     const fetchData = async () => {
       const temp = await fetch(
-        `https://api.animethemes.moe/search?q=${search}`
+        `https://api.animethemes.moe/search?fields[search]=videos&q=${search}`
       ).then((res) => res.json());
-
+      
+      console.log(temp.search)
       setSearchSuggestions([])
       temp.search.videos.map((index: any) => {
         setSearchSuggestions((searchSuggestions) => [
