@@ -1,12 +1,16 @@
 import { useState } from "react";
 import Search from "./components/Search";
 import VideoPlayer from "./components/VideoPlayer";
+import { useSearchParams } from "react-router-dom";
+
 
 function App() {
-  const [currentVideo, setCurrentVideo] = useState("")
+  const [currentVideoURL, setCurrentVideoUrl] = useSearchParams();
+  const [currentVideo, setCurrentVideo] = useState<string | null>(currentVideoURL.get("video"));
 
   const setVideo = (link:string) => {
-    setCurrentVideo(link)
+    setCurrentVideo(link);
+    setCurrentVideoUrl({video : link});
   }
 
   return (

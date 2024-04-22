@@ -1,7 +1,7 @@
 import ReactPlayer from "react-player";
 
 type VideoPlayerParams = {
-  link: string;
+  link: string | null ;
 };
 
 export function VideoPlayer({ link }: VideoPlayerParams) {
@@ -11,7 +11,7 @@ export function VideoPlayer({ link }: VideoPlayerParams) {
         <ReactPlayer
           height={"563px"}
           width={"1000px"}
-          url={link}
+          url={link != null ? link : ""}
           controls
           playing
           loop
